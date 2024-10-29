@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Bibim Backend API Document",
-                description = "Swagger로 자동 생성된 비빔 백엔드 API 문서입니다.",
+                title = "Backend API Document",
+                description = "Swagger로 자동 생성된 백엔드 API 문서입니다.",
                 version = "v0.1"
         )
 )
