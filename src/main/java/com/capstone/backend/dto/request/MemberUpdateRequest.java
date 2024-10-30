@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MemberUpdateRequest {
     @NotNull
+    private String sessionToken;
+    @NotNull
     private String username;
     @NotNull
     private String password;

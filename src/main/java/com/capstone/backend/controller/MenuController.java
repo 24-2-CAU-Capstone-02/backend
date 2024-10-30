@@ -1,5 +1,10 @@
 package com.capstone.backend.controller;
 
+import com.capstone.backend.dto.request.MenuChoiceRequest;
+import com.capstone.backend.dto.request.MenuDeleteRequest;
+import com.capstone.backend.dto.request.MenuUpdateRequest;
+import com.capstone.backend.dto.response.MenuResponse;
+import com.capstone.backend.entity.Menu;
 import com.capstone.backend.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,19 +21,26 @@ public class MenuController {
 
     @Operation(summary = "주문할 메뉴 선택", description = "menuId에 해당하는 메뉴를 선택합니다.")
     @PostMapping("/{menuId}/choice")
-    public ResponseEntity<Void> choiceMenu(@PathVariable String menuId) {
+    public ResponseEntity<Void> choiceMenu(@PathVariable String menuId, @RequestBody MenuChoiceRequest request) {
+        Menu menu = menuService.getMenuById(menuId);
+        menuService.choiceMenu(menu, request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "메뉴 수동 수정", description = "menuId에 해당하는 메뉴를 수동으로 수정합니다.")
     @PatchMapping("/{menuId}")
-    public ResponseEntity<Void> updateMenu(@PathVariable String menuId) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable String menuId, @RequestBody MenuUpdateRequest request) {
+        Menu menu = menuService.getMenuById(menuId);
+        Menu updateMenu = menuService.updateMenu(menu, request);
+        MenuResponse response = menuService.getMenuResponse(updateMenu);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "메뉴 수동 삭제", description = "menuId에 해당하는 메뉴를 수동으로 삭제합니다.")
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable String menuId) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable String menuId, @RequestBody MenuDeleteRequest request) {
+        Menu menu = menuService.getMenuById(menuId);
+        menuService.deleteMenu(menu, request);
         return ResponseEntity.ok().build();
     }
 }
