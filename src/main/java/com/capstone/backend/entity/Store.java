@@ -15,8 +15,8 @@ public class Store extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String storeName;
+    private String storeUniqueId;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String location;
+    @Column(nullable = false)
+    private String storeName;
 }
