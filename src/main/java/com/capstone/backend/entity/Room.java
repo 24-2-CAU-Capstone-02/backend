@@ -17,8 +17,4 @@ public class Room extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "store_id")
-    private Store store;
 }
