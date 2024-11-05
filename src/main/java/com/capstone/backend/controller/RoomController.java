@@ -3,12 +3,9 @@ package com.capstone.backend.controller;
 import com.capstone.backend.dto.request.*;
 import com.capstone.backend.dto.response.MenuResponse;
 import com.capstone.backend.dto.response.RoomResponse;
-import com.capstone.backend.dto.response.MemberResponse;
 import com.capstone.backend.dto.response.TokenResponse;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.Room;
-import com.capstone.backend.service.MemberService;
-import com.capstone.backend.service.MenuImageService;
 import com.capstone.backend.service.MenuService;
 import com.capstone.backend.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,13 +66,13 @@ public class RoomController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "방의 메뉴판 정보 공유", description = "roomId에 해당하는 방에 등록된 메뉴판 정보를 실제 가게 정보와 연결하여 외부에 공개합니다.")
-    @PostMapping("/{roomId}/share")
-    public ResponseEntity<Void> shareRoomMenu(@PathVariable Long roomId, @Valid @RequestBody ShareRoomMenuRequest request) {
-        Room room = roomService.getRoomById(roomId);
-        roomService.shareRoomMenu(room, request);
-        return ResponseEntity.ok().build();
-    }
+//    @Operation(summary = "방의 메뉴판 정보 공유", description = "roomId에 해당하는 방에 등록된 메뉴판 정보를 실제 가게 정보와 연결하여 외부에 공개합니다.")
+//    @PostMapping("/{roomId}/share")
+//    public ResponseEntity<Void> shareRoomMenu(@PathVariable Long roomId, @Valid @RequestBody ShareRoomMenuRequest request) {
+//        Room room = roomService.getRoomById(roomId);
+//        roomService.shareRoomMenu(room, request);
+//        return ResponseEntity.ok().build();
+//    }
 
     @Operation(summary = "메뉴 수동 추가", description = "roomId에 해당하는 방에 메뉴를 수동으로 추가합니다.")
     @PostMapping("/{roomId}/menu")
