@@ -1,6 +1,5 @@
 package com.capstone.backend.service;
 
-import com.capstone.backend.dto.request.MemberUpdateRequest;
 import com.capstone.backend.dto.request.MenuImageDeleteRequest;
 import com.capstone.backend.entity.MenuImage;
 import jakarta.transaction.Transactional;
