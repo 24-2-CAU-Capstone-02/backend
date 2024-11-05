@@ -21,7 +21,7 @@ public class MenuController {
 
     @Operation(summary = "주문할 메뉴 선택", description = "menuId에 해당하는 메뉴를 선택합니다.")
     @PostMapping("/{menuId}/choice")
-    public ResponseEntity<Void> choiceMenu(@PathVariable String menuId, @RequestBody MenuChoiceRequest request) {
+    public ResponseEntity<Void> choiceMenu(@PathVariable Long menuId, @RequestBody MenuChoiceRequest request) {
         Menu menu = menuService.getMenuById(menuId);
         menuService.choiceMenu(menu, request);
         return ResponseEntity.ok().build();
@@ -29,7 +29,7 @@ public class MenuController {
 
     @Operation(summary = "메뉴 수동 수정", description = "menuId에 해당하는 메뉴를 수동으로 수정합니다.")
     @PatchMapping("/{menuId}")
-    public ResponseEntity<MenuResponse> updateMenu(@PathVariable String menuId, @RequestBody MenuUpdateRequest request) {
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable Long menuId, @RequestBody MenuUpdateRequest request) {
         Menu menu = menuService.getMenuById(menuId);
         Menu updateMenu = menuService.updateMenu(menu, request);
         MenuResponse response = menuService.getMenuResponse(updateMenu);
@@ -38,7 +38,7 @@ public class MenuController {
 
     @Operation(summary = "메뉴 수동 삭제", description = "menuId에 해당하는 메뉴를 수동으로 삭제합니다.")
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable String menuId, @RequestBody MenuDeleteRequest request) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId, @RequestBody MenuDeleteRequest request) {
         Menu menu = menuService.getMenuById(menuId);
         menuService.deleteMenu(menu, request);
         return ResponseEntity.ok().build();

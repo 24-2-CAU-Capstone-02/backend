@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class RoomService {
-    public Room getRoomById(String roomId) {
+    public Room getRoomById(Long roomId) {
         return null;
     }
 

@@ -19,7 +19,7 @@ public class MemberController {
 
     @Operation(summary = "멤버 정보 수정", description = "멤버의 이름 및 비밀번호를 수정합니다.")
     @PatchMapping("/{memberId}")
-    public ResponseEntity<Void> updateMember(@PathVariable("memberId") String memberId, @Valid @RequestBody MemberUpdateRequest request) {
+    public ResponseEntity<Void> updateMember(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberUpdateRequest request) {
         Member member = memberService.getMemberById(memberId);
         memberService.updateMember(member, request);
         return ResponseEntity.ok().build();

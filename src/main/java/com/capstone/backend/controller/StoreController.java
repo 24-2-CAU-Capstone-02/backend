@@ -18,7 +18,7 @@ public class StoreController {
 
     @Operation(summary = "가게 정보 확인", description = "storeId에 해당하는 가게 정보를 조회합니다.")
     @GetMapping("/{storeId}")
-    public ResponseEntity<StoreResponse> getStore(@PathVariable String storeId) {
+    public ResponseEntity<StoreResponse> getStore(@PathVariable Long storeId) {
         Store store = storeService.getStoreById(storeId);
         StoreResponse response = storeService.getStoreResponse(store);
         return ResponseEntity.ok(response);

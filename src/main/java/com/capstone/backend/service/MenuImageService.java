@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class MenuImageService {
-    public MenuImage getMenuImageById(String imageId) {
+    public MenuImage getMenuImageById(Long imageId) {
         return null;
     }
 

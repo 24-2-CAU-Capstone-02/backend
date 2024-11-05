@@ -17,7 +17,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class MenuService {
-    public Menu getMenuById(String menuId) {
+    public Menu getMenuById(Long menuId) {
         return null;
     }
 

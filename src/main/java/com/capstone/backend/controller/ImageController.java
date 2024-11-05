@@ -20,7 +20,7 @@ public class ImageController {
 
     @Operation(summary = "메뉴판 이미지 삭제", description = "imageId에 해당하는 메뉴판 이미지를 삭제합니다. 메뉴판 이미지로 생성된 메뉴들도 전부 삭제됩니다.")
     @DeleteMapping("/{imageId}")
-    public ResponseEntity<Void> deleteMenuImage(@PathVariable String imageId, @Valid @RequestBody MenuImageDeleteRequest request) {
+    public ResponseEntity<Void> deleteMenuImage(@PathVariable Long imageId, @Valid @RequestBody MenuImageDeleteRequest request) {
         MenuImage menuImage = menuImageService.getMenuImageById(imageId);
         menuImageService.deleteMenuImage(menuImage, request);
         return ResponseEntity.ok().build();

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
-    public Member getMemberById(String memberId) {
+    public Member getMemberById(Long memberId) {
         return null;
     }
 

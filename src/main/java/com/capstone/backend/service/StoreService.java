@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class StoreService {
-    public Store getStoreById(String storeId) {
+    public Store getStoreById(Long storeId) {
         return null;
     }
 
