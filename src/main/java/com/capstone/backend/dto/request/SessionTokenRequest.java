@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuImageDeleteRequest {
+public class SessionTokenRequest {
     @NotNull
     private String sessionToken;
 }

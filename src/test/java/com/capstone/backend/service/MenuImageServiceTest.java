@@ -1,6 +1,5 @@
 package com.capstone.backend.service;
 
-import com.capstone.backend.dto.request.MenuImageDeleteRequest;
 import com.capstone.backend.entity.MenuImage;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.repository.MenuImageRepository;

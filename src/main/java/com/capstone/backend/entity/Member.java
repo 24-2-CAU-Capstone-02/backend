@@ -15,6 +15,10 @@ public class Member {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 

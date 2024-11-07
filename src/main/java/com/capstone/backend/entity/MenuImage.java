@@ -18,10 +18,9 @@ public class MenuImage extends BaseTimeEntity {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
-
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
+    @Column(nullable = false)
+    private String status;
 }

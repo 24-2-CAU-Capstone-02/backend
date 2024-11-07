@@ -5,8 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class TokenResponse {
-    private Long memberId;
-    private String username;
+public class RoomCreateResponse {
+    private Long roomId;
     private String sessionToken;
 }

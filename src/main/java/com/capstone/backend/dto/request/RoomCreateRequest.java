@@ -12,8 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RoomCreateRequest {
     @NotNull
-    private String sessionToken;
-    @NotNull
     private String username;
     @NotNull
     private String password;

@@ -2,9 +2,8 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.dto.request.MenuChoiceRequest;
 import com.capstone.backend.dto.request.MenuCreateRequest;
-import com.capstone.backend.dto.request.MenuDeleteRequest;
+import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
-import com.capstone.backend.dto.response.MenuResponse;
 import com.capstone.backend.entity.Member;
 import com.capstone.backend.entity.MemberMenu;
 import com.capstone.backend.entity.Menu;
@@ -20,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -140,7 +138,7 @@ class MenuServiceTest {
     @Test
     void deleteMenu_Success() {
         // given
-        MenuDeleteRequest request = new MenuDeleteRequest("validToken");
+        SessionTokenRequest request = new SessionTokenRequest("validToken");
         when(menuRepository.findById(menu.getId())).thenReturn(Optional.of(menu));
 
         // when
@@ -153,7 +151,7 @@ class MenuServiceTest {
     @Test
     void deleteMenu_Failure() {
         // given
-        MenuDeleteRequest request = new MenuDeleteRequest("validToken");
+        SessionTokenRequest request = new SessionTokenRequest("validToken");
         Menu nonExistentMenu = Menu.builder().id(99L).build();
 
         when(menuRepository.findById(nonExistentMenu.getId())).thenReturn(Optional.empty());
@@ -190,29 +188,5 @@ class MenuServiceTest {
         // when & then
         assertThrows(CustomException.class, () -> menuService.createMenu(nonExistentRoom, request));
         verify(menuRepository, never()).save(any());
-    }
-
-    @Test
-    void getMenuResponse_Success() {
-        // when
-        MenuResponse response = menuService.getMenuResponse(menu);
-
-        // then
-        assertNotNull(response);
-        assertEquals(menu.getMenuName(), response.getMenuName());
-    }
-
-    @Test
-    void getMenuResponseList_Success() {
-        // given
-        List<Menu> menuList = List.of(menu);
-
-        // when
-        List<MenuResponse> responseList = menuService.getMenuResponseList(menuList);
-
-        // then
-        assertNotNull(responseList);
-        assertEquals(1, responseList.size());
-        assertEquals(menu.getMenuName(), responseList.get(0).getMenuName());
     }
 }
