@@ -61,7 +61,7 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "방 멤버 추가", description = "roomId에 해당하는 방에 멤버를 추가합니다.")
+    @Operation(summary = "방 로그인 또는 새 멤버 추가", description = "roomId에 해당하는 방에 로그인을 시도합니다. 요청에 담긴 멤버 이름에 해당하는 멤버가 방에 존재하지 않는다면 해당 요청을 바탕으로 새 멤버를 추가합니다. 멤버 이름을 가진 멤버는 존재하지만 비밀번호가 틀리다면 요청을 실패합니다.")
     @PostMapping("/{roomId}/member")
     public ResponseEntity<TokenResponse> addMember(@PathVariable Long roomId, @Valid @RequestBody RoomAddMemberRequest request) {
         Room room = roomService.getRoomById(roomId);

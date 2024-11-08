@@ -10,6 +10,7 @@ public enum ErrorCode {
     // AUTH
     SESSION_TOKEN_IS_INVALID(HttpStatus.UNAUTHORIZED, "AUTH-001", "세션 토큰이 유효하지 않습니다."),
     MEMBER_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-002", "권한이 없습니다."),
+    PASSWORD_NOT_CORRECT(HttpStatus.UNAUTHORIZED, "AUTH-003", "비밀번호가 일치하지 않습니다."),
 
     // DB
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-001", "DB에서 Member를 찾을 수 없습니다."),

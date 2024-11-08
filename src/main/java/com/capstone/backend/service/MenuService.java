@@ -5,12 +5,13 @@ import com.capstone.backend.dto.request.MenuCreateRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.entity.Member;
+import com.capstone.backend.entity.MemberMenu;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.Room;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
+import com.capstone.backend.repository.MemberMenuRepository;
 import com.capstone.backend.repository.MenuRepository;
-import com.capstone.backend.repository.RoomRepository;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final RoomRepository roomRepository;
+    private final MemberMenuRepository memberMenuRepository;
     private final SessionUtil sessionUtil;
 
     public Menu getMenuById(Long menuId) throws CustomException {
@@ -37,7 +38,20 @@ public class MenuService {
             throw new CustomException(ErrorCode.MEMBER_NOT_AUTHORIZED);
         }
 
-        // TODO : 웹소켓
+        MemberMenu existedMemberMenu = memberMenuRepository.findByMenuAndMember(menu, member).orElse(null);
+        if (existedMemberMenu != null) {
+            existedMemberMenu.setQuantity(request.getQuantity());
+            memberMenuRepository.save(existedMemberMenu);
+        }
+        else {
+            MemberMenu memberMenu = MemberMenu.builder()
+                    .room(menu.getRoom())
+                    .menu(menu)
+                    .member(member)
+                    .quantity(request.getQuantity())
+                    .build();
+            memberMenuRepository.save(memberMenu);
+        }
     }
 
     public Menu updateMenu(Menu menu, MenuUpdateRequest request) throws CustomException {

@@ -14,5 +14,5 @@ public class MenuChoiceRequest {
     @NotNull
     private String sessionToken;
     @NotNull
-    private String status;
+    private Integer quantity;
 }

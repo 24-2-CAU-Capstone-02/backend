@@ -2,23 +2,19 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.dto.request.MenuImageUploadRequest;
 import com.capstone.backend.dto.request.RoomAddMemberRequest;
+import com.capstone.backend.dto.response.MemberResponse;
 import com.capstone.backend.dto.response.RoomResponse;
-import com.capstone.backend.entity.Member;
-import com.capstone.backend.entity.Menu;
-import com.capstone.backend.entity.MenuImage;
-import com.capstone.backend.entity.Room;
+import com.capstone.backend.entity.*;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
-import com.capstone.backend.repository.MemberRepository;
-import com.capstone.backend.repository.MenuImageRepository;
-import com.capstone.backend.repository.MenuRepository;
-import com.capstone.backend.repository.RoomRepository;
+import com.capstone.backend.repository.*;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -28,6 +24,8 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
+    private final MenuOcrInfoRepository ocrInfoRepository;
+    private final MemberMenuRepository memberMenuRepository;
     private final SessionUtil sessionUtil;
 
     public Room getRoomById(Long roomId) throws CustomException {
@@ -35,7 +33,7 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
     }
 
-    public List<Menu> getMenuListInRoom(Room room) {
+    public List<Menu> getMenuListInRoom(Room room) throws CustomException {
         return menuRepository.findAllByRoom(room);
     }
 
@@ -46,7 +44,7 @@ public class RoomService {
         return room;
     }
 
-    public void uploadMenuBoardImage(Room room, MenuImageUploadRequest request) {
+    public void uploadMenuBoardImage(Room room, MenuImageUploadRequest request) throws CustomException {
         List<String> imageUrls = request.getImageUrls();
         for (String imageUrl : imageUrls) {
             MenuImage menuImage = MenuImage.builder()
@@ -58,10 +56,40 @@ public class RoomService {
             menuImageRepository.save(menuImage);
 
             // TODO : 머신러닝 모델과 연결하여 Menu 생성 및 MenuImage와 연결
+
+            for (int i = 0; i < 3; i++) {
+                MenuOcrInfo ocrInfo = MenuOcrInfo.builder()
+                        .positionX(100)
+                        .positionY(100)
+                        .width(10)
+                        .height(10)
+                        .build();
+                ocrInfoRepository.save(ocrInfo);
+
+                Menu menu = Menu.builder()
+                        .room(room)
+                        .image(menuImage)
+                        .ocrInfo(ocrInfo)
+                        .menuName("test" + i)
+                        .price(10000)
+                        .build();
+                menuRepository.save(menu);
+            }
         }
     }
 
-    public Member addMemberToRoom(Room room, RoomAddMemberRequest request) {
+    public Member addMemberToRoom(Room room, RoomAddMemberRequest request) throws CustomException {
+        Member existedMember = memberRepository.findByRoomAndUsername(room, request.getUsername()).orElse(null);
+        if (existedMember != null) {
+            if (!Objects.equals(existedMember.getPassword(), request.getPassword())) {
+                throw new CustomException(ErrorCode.PASSWORD_NOT_CORRECT);
+            }
+            String sessionToken = sessionUtil.generateUUIDToken();
+            existedMember.setSessionToken(sessionToken);
+            memberRepository.save(existedMember);
+            return existedMember;
+        }
+
         String sessionToken = sessionUtil.generateUUIDToken();
         Member member = Member.builder()
                 .room(room)
@@ -74,7 +102,21 @@ public class RoomService {
         return member;
     }
 
-    public RoomResponse getRoomResponse(Room room) {
-        return null;
+    public RoomResponse getRoomResponse(Room room) throws CustomException {
+        List<MemberMenu> choiceList = memberMenuRepository.findAllByRoom(room);
+        int totalPrice = 0;
+        for (MemberMenu memberMenu : choiceList) {
+            Menu menu = memberMenu.getMenu();
+            totalPrice += memberMenu.getQuantity() + menu.getPrice();
+        }
+        List<MemberResponse> memberList = memberRepository.findAllByRoom(room).stream()
+                .map(MemberResponse::getMemberResponse)
+                .toList();
+
+        return RoomResponse.builder()
+                .id(room.getId())
+                .totalPrice(totalPrice)
+                .memberList(memberList)
+                .build();
     }
 }
