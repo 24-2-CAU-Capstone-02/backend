@@ -1,0 +1,53 @@
+name: Auto Deploy with Docker Compose
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      - name: Copy JAR to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: ./build/libs/*.jar
+          target: ${{ secrets.PROJECT_PATH }}
+          strip_components: 2
+
+      - name: Execute remote SSH commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            mkdir -p logs
+            FILE_NAME="logs/capstone-deploy-$(date +%Y%m%d_%H%M%S).log"
+            kill $(ps -ef | grep 'capstone-deploy.jar' | grep -v grep | awk '{print $2}')
+            sleep 5
+            nohup java -jar capstone-deploy.jar >> ${FILE_NAME} 2>&1 &
+            sleep 5
