@@ -14,18 +14,22 @@ import java.util.List;
 public class MenuResponse {
     private Long id;
     private Long roomId;
+    private Long imageId;
     private OcrResponse ocrInfo;
     private String menuName;
     private Integer price;
+    private String status;
 
     public static MenuResponse getMenuResponse(Menu menu) throws CustomException {
         try {
             return MenuResponse.builder()
                     .id(menu.getId())
                     .roomId(menu.getRoom().getId())
+                    .imageId(menu.getImage() != null ? menu.getImage().getId() : null)
                     .ocrInfo(OcrResponse.getOCRResponse(menu.getOcrInfo()))
                     .menuName(menu.getMenuName())
                     .price(menu.getPrice())
+                    .status(menu.getStatus())
                     .build();
         } catch (Exception e) {
             throw new CustomException(ErrorCode.MAPPING_ERROR);

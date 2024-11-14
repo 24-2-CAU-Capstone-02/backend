@@ -9,6 +9,5 @@ import java.util.List;
 @Builder
 public class RoomResponse {
     private Long id;
-    private Integer totalPrice;
     private List<MemberResponse> memberList;
 }
