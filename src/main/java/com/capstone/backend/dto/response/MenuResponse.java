@@ -14,7 +14,6 @@ import java.util.List;
 public class MenuResponse {
     private Long id;
     private Long roomId;
-    private OcrResponse ocrInfo;
     private String menuName;
     private Integer price;
 
@@ -23,7 +22,6 @@ public class MenuResponse {
             return MenuResponse.builder()
                     .id(menu.getId())
                     .roomId(menu.getRoom().getId())
-                    .ocrInfo(OcrResponse.getOCRResponse(menu.getOcrInfo()))
                     .menuName(menu.getMenuName())
                     .price(menu.getPrice())
                     .build();

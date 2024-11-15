@@ -90,7 +90,6 @@ public class MenuService {
         Menu menu = Menu.builder()
                 .room(room)
                 .image(null)
-                .ocrInfo(null)
                 .menuName(request.getMenuName())
                 .price(request.getPrice())
                 .status("added")

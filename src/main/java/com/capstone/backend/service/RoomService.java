@@ -24,7 +24,6 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
-    private final MenuOcrInfoRepository ocrInfoRepository;
     private final MemberMenuRepository memberMenuRepository;
     private final SessionUtil sessionUtil;
 
@@ -58,18 +57,9 @@ public class RoomService {
             // TODO : 머신러닝 모델과 연결하여 Menu 생성 및 MenuImage와 연결
 
             for (int i = 0; i < 3; i++) {
-                MenuOcrInfo ocrInfo = MenuOcrInfo.builder()
-                        .positionX(100)
-                        .positionY(100)
-                        .width(10)
-                        .height(10)
-                        .build();
-                ocrInfoRepository.save(ocrInfo);
-
                 Menu menu = Menu.builder()
                         .room(room)
                         .image(menuImage)
-                        .ocrInfo(ocrInfo)
                         .menuName("test" + i)
                         .price(10000)
                         .build();

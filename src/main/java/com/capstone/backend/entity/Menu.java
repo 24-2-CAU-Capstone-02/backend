@@ -22,10 +22,6 @@ public class Menu extends BaseTimeEntity {
     @JoinColumn(name="image_id")
     private MenuImage image;
 
-    @OneToOne
-    @JoinColumn(name = "ocr_info_id")
-    private MenuOcrInfo ocrInfo;
-
     @Column(nullable = false)
     private String menuName;
 
