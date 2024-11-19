@@ -3,11 +3,13 @@ package com.capstone.backend.service;
 import com.capstone.backend.dto.request.MenuImageUploadRequest;
 import com.capstone.backend.dto.request.RoomAddMemberRequest;
 import com.capstone.backend.dto.response.MemberResponse;
+import com.capstone.backend.dto.response.MenuItemResponse;
 import com.capstone.backend.dto.response.RoomResponse;
 import com.capstone.backend.entity.*;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.capstone.backend.repository.*;
+import com.capstone.backend.utils.OpenAiUtil;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
     private final MemberMenuRepository memberMenuRepository;
+    private final OpenAiUtil openAiUtil;
     private final SessionUtil sessionUtil;
 
     public Room getRoomById(Long roomId) throws CustomException {
@@ -51,16 +54,28 @@ public class RoomService {
             menuImageRepository.save(menuImage);
 
             // TODO : 머신러닝 모델과 연결하여 Menu 생성 및 MenuImage와 연결
-
-            for (int i = 0; i < 3; i++) {
+            List<MenuItemResponse> menuItemResponses = openAiUtil.analyzeImages(imageUrl);
+            for (MenuItemResponse menuItemResponse : menuItemResponses) {
                 Menu menu = Menu.builder()
                         .room(room)
                         .image(menuImage)
-                        .menuName("test" + i)
-                        .price(10000)
+                        .menuName(menuItemResponse.getMenuName())
+                        .price(Integer.parseInt(menuItemResponse.getPrice()))
+                        .status(menuItemResponse.getDescription())
                         .build();
+
                 menuRepository.save(menu);
             }
+
+//            for (int i = 0; i < 3; i++) {
+//                Menu menu = Menu.builder()
+//                        .room(room)
+//                        .image(menuImage)
+//                        .menuName("test" + i)
+//                        .price(10000)
+//                        .build();
+//                menuRepository.save(menu);
+//            }
         }
     }
 

@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     // MAPPING
     MAPPING_ERROR(HttpStatus.BAD_REQUEST, "MAPPING-001", "Response 매핑에 실패했습니다."),
+    JSON_MAPPING_ERROR(HttpStatus.BAD_REQUEST, "MAPPING-002", "Open ai response 매핑에 실패했습니다."),
 
     DUMMY_ERROR_CODE(HttpStatus.OK, "DUMMY", "DUMMY_ERROR_CODE");
 

@@ -16,6 +16,8 @@ spring:
   sql:
     init:
       mode: always
+  config:
+    import: classpath:SECRET.yml
 
 server:
   port: 8090
