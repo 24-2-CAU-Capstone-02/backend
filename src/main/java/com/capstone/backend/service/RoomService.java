@@ -26,7 +26,6 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
-    private final MemberMenuRepository memberMenuRepository;
     private final OpenAiUtil openAiUtil;
     private final SessionUtil sessionUtil;
 
@@ -53,7 +52,6 @@ public class RoomService {
 
             menuImageRepository.save(menuImage);
 
-            // TODO : 머신러닝 모델과 연결하여 Menu 생성 및 MenuImage와 연결
             List<MenuItemResponse> menuItemResponses = openAiUtil.analyzeImages(imageUrl);
             for (MenuItemResponse menuItemResponse : menuItemResponses) {
                 Menu menu = Menu.builder()
