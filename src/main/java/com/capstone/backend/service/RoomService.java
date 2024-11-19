@@ -32,10 +32,6 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
     }
 
-    public List<Menu> getMenuListInRoom(Room room) throws CustomException {
-        return menuRepository.findAllByRoom(room);
-    }
-
     public Room createRoom() throws CustomException {
         Room room = Room.builder().build();
         roomRepository.save(room);
@@ -93,19 +89,12 @@ public class RoomService {
     }
 
     public RoomResponse getRoomResponse(Room room) throws CustomException {
-        List<MemberMenu> choiceList = memberMenuRepository.findAllByRoom(room);
-        int totalPrice = 0;
-        for (MemberMenu memberMenu : choiceList) {
-            Menu menu = memberMenu.getMenu();
-            totalPrice += memberMenu.getQuantity() + menu.getPrice();
-        }
         List<MemberResponse> memberList = memberRepository.findAllByRoom(room).stream()
                 .map(MemberResponse::getMemberResponse)
                 .toList();
 
         return RoomResponse.builder()
                 .id(room.getId())
-                .totalPrice(totalPrice)
                 .memberList(memberList)
                 .build();
     }

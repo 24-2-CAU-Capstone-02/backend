@@ -4,7 +4,9 @@ import com.capstone.backend.dto.request.*;
 import com.capstone.backend.dto.response.*;
 import com.capstone.backend.entity.Member;
 import com.capstone.backend.entity.Menu;
+import com.capstone.backend.entity.MenuImage;
 import com.capstone.backend.entity.Room;
+import com.capstone.backend.service.MenuImageService;
 import com.capstone.backend.service.MenuService;
 import com.capstone.backend.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
     private final MenuService menuService;
+    private final MenuImageService menuImageService;
 
     @Operation(summary = "방 정보 확인", description = "roomId에 해당하는 방의 정보를 조회합니다.")
     @GetMapping("/{roomId}")
@@ -36,8 +39,17 @@ public class RoomController {
     @GetMapping("/{roomId}/menu")
     public ResponseEntity<List<MenuResponse>> getMenuList(@PathVariable Long roomId) {
         Room room = roomService.getRoomById(roomId);
-        List<Menu> menuList = roomService.getMenuListInRoom(room);
+        List<Menu> menuList = menuService.getMenuListInRoom(room);
         List<MenuResponse> response = MenuResponse.getMenuResponseList(menuList);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "업로드된 메뉴판 이미지 목록 확인", description = "roomId에 해당하는 방에 업로드된 메뉴판 이미지 목록을 조회합니다.")
+    @GetMapping("/{roomId}/image")
+    public ResponseEntity<List<MenuImageResponse>> getMenuImageList(@PathVariable Long roomId) {
+        Room room = roomService.getRoomById(roomId);
+        List<MenuImage> menuImageList = menuImageService.getMenuImageListInRoom(room);
+        List<MenuImageResponse> response = MenuImageResponse.getMenuImageResponseList(menuImageList);
         return ResponseEntity.ok(response);
     }
 

@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -32,27 +33,31 @@ public class MenuService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
     }
 
-    public void choiceMenu(Menu menu, MenuChoiceRequest request) throws CustomException {
-        Member member = sessionUtil.getMemberBySessionToken(request.getSessionToken());
-        if (!isValidMemberWithMenu(menu, member)) {
-            throw new CustomException(ErrorCode.MEMBER_NOT_AUTHORIZED);
-        }
-
-        MemberMenu existedMemberMenu = memberMenuRepository.findByMenuAndMember(menu, member).orElse(null);
-        if (existedMemberMenu != null) {
-            existedMemberMenu.setQuantity(request.getQuantity());
-            memberMenuRepository.save(existedMemberMenu);
-        }
-        else {
-            MemberMenu memberMenu = MemberMenu.builder()
-                    .room(menu.getRoom())
-                    .menu(menu)
-                    .member(member)
-                    .quantity(request.getQuantity())
-                    .build();
-            memberMenuRepository.save(memberMenu);
-        }
+    public List<Menu> getMenuListInRoom(Room room) throws CustomException {
+        return menuRepository.findAllByRoom(room);
     }
+
+//    public void choiceMenu(Menu menu, MenuChoiceRequest request) throws CustomException {
+//        Member member = sessionUtil.getMemberBySessionToken(request.getSessionToken());
+//        if (!isValidMemberWithMenu(menu, member)) {
+//            throw new CustomException(ErrorCode.MEMBER_NOT_AUTHORIZED);
+//        }
+//
+//        MemberMenu existedMemberMenu = memberMenuRepository.findByMenuAndMember(menu, member).orElse(null);
+//        if (existedMemberMenu != null) {
+//            existedMemberMenu.setQuantity(request.getQuantity());
+//            memberMenuRepository.save(existedMemberMenu);
+//        }
+//        else {
+//            MemberMenu memberMenu = MemberMenu.builder()
+//                    .room(menu.getRoom())
+//                    .menu(menu)
+//                    .member(member)
+//                    .quantity(request.getQuantity())
+//                    .build();
+//            memberMenuRepository.save(memberMenu);
+//        }
+//    }
 
     public Menu updateMenu(Menu menu, MenuUpdateRequest request) throws CustomException {
         Member member = sessionUtil.getMemberBySessionToken(request.getSessionToken());

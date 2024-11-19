@@ -4,6 +4,7 @@ import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.entity.Member;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.MenuImage;
+import com.capstone.backend.entity.Room;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.capstone.backend.repository.MenuImageRepository;
@@ -43,5 +44,9 @@ public class MenuImageService {
             menu.setStatus("deleted");
             menuRepository.save(menu);
         }
+    }
+
+    public List<MenuImage> getMenuImageListInRoom(Room room) {
+        return menuImageRepository.findAllByRoom(room);
     }
 }
