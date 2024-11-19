@@ -2,7 +2,6 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.dto.request.MenuImageUploadRequest;
 import com.capstone.backend.dto.request.RoomAddMemberRequest;
-import com.capstone.backend.dto.request.RoomCreateRequest;
 import com.capstone.backend.dto.response.RoomResponse;
 import com.capstone.backend.dto.response.TokenResponse;
 import com.capstone.backend.entity.Member;

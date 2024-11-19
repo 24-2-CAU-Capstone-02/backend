@@ -22,7 +22,7 @@ public class Member {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     private String password;

@@ -8,7 +8,6 @@ import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.Room;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
-import com.capstone.backend.repository.MemberMenuRepository;
 import com.capstone.backend.repository.MenuRepository;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
@@ -23,7 +22,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MemberMenuRepository memberMenuRepository;
     private final SessionUtil sessionUtil;
 
     public Menu getMenuById(Long menuId) throws CustomException {

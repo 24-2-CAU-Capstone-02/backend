@@ -55,12 +55,10 @@ public class RoomController {
 
     @Operation(summary = "방 생성", description = "방을 생성합니다.")
     @PostMapping
-    public ResponseEntity<RoomCreateResponse> createRoom(@Valid @RequestBody RoomAddMemberRequest request) {
+    public ResponseEntity<RoomCreateResponse> createRoom() {
         Room room = roomService.createRoom();
-        Member member = roomService.addMemberToRoom(room, request);
         RoomCreateResponse response = RoomCreateResponse.builder()
                 .roomId(room.getId())
-                .sessionToken(member.getSessionToken())
                 .build();
         return ResponseEntity.ok(response);
     }

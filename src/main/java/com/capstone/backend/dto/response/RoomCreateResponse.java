@@ -7,5 +7,4 @@ import lombok.Getter;
 @Builder
 public class RoomCreateResponse {
     private Long roomId;
-    private String sessionToken;
 }
