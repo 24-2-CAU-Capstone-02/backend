@@ -1,6 +1,5 @@
 package com.capstone.backend.service;
 
-import com.capstone.backend.dto.request.MenuChoiceRequest;
 import com.capstone.backend.dto.request.MenuCreateRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;

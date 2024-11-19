@@ -15,7 +15,6 @@ public class MenuResponse {
     private Long id;
     private Long roomId;
     private Long imageId;
-    private OcrResponse ocrInfo;
     private String menuName;
     private Integer price;
     private String status;
@@ -26,7 +25,6 @@ public class MenuResponse {
                     .id(menu.getId())
                     .roomId(menu.getRoom().getId())
                     .imageId(menu.getImage() != null ? menu.getImage().getId() : null)
-                    .ocrInfo(OcrResponse.getOCRResponse(menu.getOcrInfo()))
                     .menuName(menu.getMenuName())
                     .price(menu.getPrice())
                     .status(menu.getStatus())

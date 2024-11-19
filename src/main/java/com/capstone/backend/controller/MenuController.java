@@ -1,6 +1,5 @@
 package com.capstone.backend.controller;
 
-import com.capstone.backend.dto.request.MenuChoiceRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
 import com.capstone.backend.dto.response.MenuResponse;
@@ -19,14 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MenuController {
     private final MenuService menuService;
-
-//    @Operation(summary = "주문할 메뉴 선택", description = "menuId에 해당하는 메뉴를 선택합니다.")
-//    @PostMapping("/{menuId}/choice")
-//    public ResponseEntity<Void> choiceMenu(@PathVariable Long menuId, @Valid @RequestBody MenuChoiceRequest request) {
-//        Menu menu = menuService.getMenuById(menuId);
-//        menuService.choiceMenu(menu, request);
-//        return ResponseEntity.ok().build();
-//    }
 
     @Operation(summary = "메뉴 수동 수정", description = "menuId에 해당하는 메뉴를 수동으로 수정합니다.")
     @PatchMapping("/{menuId}")

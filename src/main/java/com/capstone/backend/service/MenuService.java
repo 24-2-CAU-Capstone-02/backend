@@ -1,11 +1,9 @@
 package com.capstone.backend.service;
 
-import com.capstone.backend.dto.request.MenuChoiceRequest;
 import com.capstone.backend.dto.request.MenuCreateRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.entity.Member;
-import com.capstone.backend.entity.MemberMenu;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.Room;
 import com.capstone.backend.exception.CustomException;
@@ -36,28 +34,6 @@ public class MenuService {
     public List<Menu> getMenuListInRoom(Room room) throws CustomException {
         return menuRepository.findAllByRoom(room);
     }
-
-//    public void choiceMenu(Menu menu, MenuChoiceRequest request) throws CustomException {
-//        Member member = sessionUtil.getMemberBySessionToken(request.getSessionToken());
-//        if (!isValidMemberWithMenu(menu, member)) {
-//            throw new CustomException(ErrorCode.MEMBER_NOT_AUTHORIZED);
-//        }
-//
-//        MemberMenu existedMemberMenu = memberMenuRepository.findByMenuAndMember(menu, member).orElse(null);
-//        if (existedMemberMenu != null) {
-//            existedMemberMenu.setQuantity(request.getQuantity());
-//            memberMenuRepository.save(existedMemberMenu);
-//        }
-//        else {
-//            MemberMenu memberMenu = MemberMenu.builder()
-//                    .room(menu.getRoom())
-//                    .menu(menu)
-//                    .member(member)
-//                    .quantity(request.getQuantity())
-//                    .build();
-//            memberMenuRepository.save(memberMenu);
-//        }
-//    }
 
     public Menu updateMenu(Menu menu, MenuUpdateRequest request) throws CustomException {
         Member member = sessionUtil.getMemberBySessionToken(request.getSessionToken());
