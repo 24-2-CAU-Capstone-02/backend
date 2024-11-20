@@ -14,7 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuImageUploadRequest {
     @NotNull
-    private String sessionToken;
-    @NotNull
     private List<String> imageUrls;
 }
