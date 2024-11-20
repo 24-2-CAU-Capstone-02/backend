@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -63,11 +64,19 @@ public class RoomController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "메뉴판 이미지 등록", description = "roomId에 해당하는 방에 메뉴판 이미지를 업로드하여 등록합니다. 업로드된 이미지를 머신러닝 모델을 통해 메뉴 리스트로 변환합니다.")
+    @Operation(summary = "메뉴판 이미지 등록", description = "roomId에 해당하는 방에 메뉴판 이미지를 업로드하여 등록합니다. 이미지를 url로 업로드")
     @PostMapping("/{roomId}/upload")
     public ResponseEntity<Void> uploadMenuBoardImage(@PathVariable Long roomId, @Valid @RequestBody MenuImageUploadRequest request) {
         Room room = roomService.getRoomById(roomId);
         roomService.uploadMenuBoardImage(room, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "form data를 사용한 메뉴판 이미지 등록", description = "roomId에 해당하는 방에 메뉴판 이미지를 업로드하여 등록합니다. 이미지를 폼데이터로 업로드")
+    @PostMapping("/{roomId}/upload/image")
+    public ResponseEntity<Void> uploadMenuBoardImageInFormData(@PathVariable Long roomId, @RequestParam("images") List<MultipartFile> images) {
+        Room room = roomService.getRoomById(roomId);
+        roomService.uploadMenuBoardImageFormData(room, images);
         return ResponseEntity.ok().build();
     }
 
