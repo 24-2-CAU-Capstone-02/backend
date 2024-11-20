@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.EncodedResourceResolver;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -19,6 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // log 파일
         registry.addResourceHandler("/logs/**")
-                .addResourceLocations("file:./logs/");
+                .addResourceLocations("file:./logs/")
+                .resourceChain(true)
+                .addResolver(new EncodedResourceResolver());
     }
 }
