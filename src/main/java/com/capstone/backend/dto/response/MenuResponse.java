@@ -18,6 +18,10 @@ public class MenuResponse {
     private String menuName;
     private Integer price;
     private String status;
+    private String description;
+    private String generalizedName;
+    private String allergy;
+    private int spicyLevel;
 
     public static MenuResponse getMenuResponse(Menu menu) throws CustomException {
         try {
@@ -28,6 +32,10 @@ public class MenuResponse {
                     .menuName(menu.getMenuName())
                     .price(menu.getPrice())
                     .status(menu.getStatus())
+                    .description(menu.getDescription())
+                    .generalizedName(menu.getGeneralizedName())
+                    .allergy(menu.getAllergy())
+                    .spicyLevel(menu.getSpicyLevel())
                     .build();
         } catch (Exception e) {
             throw new CustomException(ErrorCode.MAPPING_ERROR);
