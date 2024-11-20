@@ -29,4 +29,13 @@ public class Menu extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String status;
+
+    private String description;
+
+    private String generalizedName;
+
+    private String allergy;
+
+    private int spicyLevel;
+    //영양성분
 }
