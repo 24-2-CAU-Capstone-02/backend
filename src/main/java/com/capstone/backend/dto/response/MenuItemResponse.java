@@ -12,5 +12,6 @@ public class MenuItemResponse {
     private String price;
     private String generalizedName;
     private String description;
-    private String allergyInfo;
+    private String allergy;
+    private int spicyLevel;
 }
