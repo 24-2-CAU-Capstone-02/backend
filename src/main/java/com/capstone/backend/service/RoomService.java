@@ -63,6 +63,7 @@ public class RoomService {
                         .menuName(menuItemResponse.getMenuName())
                         .price(Integer.parseInt(menuItemResponse.getPrice()))
                         .status("added")
+                        .description(menuItemResponse.getDescription())
                         .generalizedName(menuItemResponse.getGeneralizedName())
                         .allergy(menuItemResponse.getAllergy())
                         .spicyLevel(menuItemResponse.getSpicyLevel())
