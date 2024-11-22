@@ -16,7 +16,7 @@ public class ImageUtil {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Thumbnails.of(new URL(imageUrl))
                     .size(800, 600)
-                    .outputQuality(0.8)
+                    .outputQuality(0.5)
                     .toOutputStream(baos);
 
             return Base64.getEncoder().encodeToString(baos.toByteArray());
