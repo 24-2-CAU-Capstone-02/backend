@@ -85,27 +85,28 @@ public class OpenAiUtil {
         Map<String, Object> textContent = new HashMap<>();
         textContent.put("type", "text");
         textContent.put("text",
-                "다음 이미지는 한국어로 작성된 메뉴판입니다. 메뉴판에서 각 메뉴와 가격을 짝지어 반환해 주세요. " +
-                "추가로, 각 메뉴의 일반화된 이름, 간단한 소개, 알레르기 유발 성분 정보, 맵기 수준(spicyLevel)을 함께 반환해 주세요.\n\n" +
-                "일반화된 이름(generalizedName)은 메뉴의 특정한 이름을 보다 간단하게 표현한 이름입니다. " +
-                "예를 들어, '홈메이드 크리스피 춘권'이라는 메뉴는 '춘권'으로 일반화될 수 있습니다. " +
-                "이 정보는 사용자가 메뉴의 본질을 쉽게 이해하고 유사한 메뉴를 그룹화하거나 비교할 수 있도록 도와줍니다." +
-                "- 가격이 \"무료\"로 표시된 경우에는 0으로 처리해 주세요.\n" +
-                "- 가격이 '6.0'과 같이 축약된 경우에는 반드시 원 단위로 변환하여 숫자만 반환해 주세요. 예: '6.0' → '6000'.\n" +
-                "- 맵기 수준(spicyLevel)은 1~5까지 숫자로 표현해 주세요. (예: '매움' → '5', '중간' → '3', '안 매움' → '1')\n\n" +
-                "- 설명(description)은 10-30자 정도로 작성해 주세요." +
-                "결과 형식은 다음과 같습니다:\n" +
+                "The following image is a menu written in Korean. Please extract each menu item and its price and return them as a pair. " +
+                "Additionally, include the generalized name, a brief description, allergy information, and spiciness level (spicyLevel) for each menu item.\n\n" +
+                "The generalized name represents a simplified version of the menu item’s name. " +
+                "For example, 'Homemade Crispy Spring Rolls' could be generalized to 'Spring Rolls'. " +
+                "This information helps users easily understand the essence of the menu and compare or group similar items." +
+                "- If the price is displayed as \"free,\" please process it as 0.\n" +
+                "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
+                "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '3', 'Not Spicy' → '0')\n\n" +
+                "- The description should be between 10 and 30 characters long." +
+                "- The description and allergy information must be detailed and easy for foreigners to understand." +
+                "The result format should be as follows:\n" +
                 "[\n" +
                 "  {\n" +
-                "    \"menuName\": \"메뉴 이름\",           // 메뉴판에 표시된 이름\n" +
-                "    \"price\": \"가격 (숫자만)\",           // 숫자 형태의 가격\n" +
-                "    \"generalizedName\": \"일반화된 이름\", // 간단히 일반화된 이름\n" +
-                "    \"description\": \"간단한 소개\",       // 메뉴 설명\n" +
-                "    \"allergy\": \"알레르기 정보\",     // 알레르기 유발 성분\n" +
-                "    \"spicyLevel\": \"맵기 수준 (1-5 숫자)\" // 맵기 정도 (숫자로 반환)\n" +
+                "    \"menuName\": \"Menu name\",            // The name as shown on the menu\n" +
+                "    \"price\": \"Price (numeric only)\",    // Numeric price\n" +
+                "    \"generalizedName\": \"Generalized name\", // Simplified generalized name\n" +
+                "    \"description\": \"Brief description\", // Short description of the menu item\n" +
+                "    \"allergy\": \"Allergy information\",   // Allergy-causing ingredients\n" +
+                "    \"spicyLevel\": \"Spiciness level (1-5)\" // Spiciness level (as a number)\n" +
                 "  }\n" +
                 "]\n\n" +
-                "예시:\n" +
+                "Example:\n" +
                 "[\n" +
                 "  {\n" +
                 "    \"menuName\": \"아메리카노\",\n" +
@@ -113,7 +114,7 @@ public class OpenAiUtil {
                 "    \"generalizedName\": \"아메리카노\",\n" +
                 "    \"description\": \"에스프레소에 물을 추가한 커피\",\n" +
                 "    \"allergy\": \"없음\",\n" +
-                "    \"spicyLevel\": \"1\"\n" +
+                "    \"spicyLevel\": \"0\"\n" +
                 "  },\n" +
                 "  {\n" +
                 "    \"menuName\": \"매운 해물찜\",\n" +
@@ -124,6 +125,7 @@ public class OpenAiUtil {
                 "    \"spicyLevel\": \"5\"\n" +
                 "  }\n" +
                 "]");
+
 
         contentList.add(textContent);
 
