@@ -62,7 +62,10 @@ public class RoomService {
                         .image(menuImage)
                         .menuName(menuItemResponse.getMenuName())
                         .price(Integer.parseInt(menuItemResponse.getPrice()))
-                        .status(menuItemResponse.getDescription())
+                        .status("added")
+                        .generalizedName(menuItemResponse.getGeneralizedName())
+                        .allergy(menuItemResponse.getAllergy())
+                        .spicyLevel(menuItemResponse.getSpicyLevel())
                         .build();
 
                 menuRepository.save(menu);
