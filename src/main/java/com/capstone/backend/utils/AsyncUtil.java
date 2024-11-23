@@ -56,7 +56,6 @@ public class AsyncUtil {
         return CompletableFuture.completedFuture(null);
     }
 
-    @Async
     public String convertImage(MultipartFile image) {
         return s3Util.uploadImage(image);
     }
