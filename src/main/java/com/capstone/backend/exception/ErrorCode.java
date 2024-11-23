@@ -30,6 +30,9 @@ public enum ErrorCode {
     AWS_S3_NOT_CONNECTED(HttpStatus.SERVICE_UNAVAILABLE, "AWS-002", "AWS S3 연결에 실패했습니다."),
     FAILED_TO_UPLOAD_FILE(HttpStatus.BAD_REQUEST, "AWS-003", "파일 읽기 오류 혹은 잘못된 입력입니다."),
 
+    // IMAGE
+    IMAGE_COMPRESS_FAILED(HttpStatus.BAD_REQUEST, "IMAGE-001", "이미지 압축에 실패했습니다."),
+
     DUMMY_ERROR_CODE(HttpStatus.OK, "DUMMY", "DUMMY_ERROR_CODE");
 
     private final HttpStatus httpStatus;

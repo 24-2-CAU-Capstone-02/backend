@@ -5,17 +5,17 @@ import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -24,48 +24,38 @@ import java.util.*;
 @Component
 public class OpenAiUtil {
 
-    private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    private final WebClient webClient;
 
-    @Value("${api-key.gpt}")
-    private String API_KEY;
-
+    public OpenAiUtil(@Value("${api-key.gpt}") String API_KEY) {
+        this.webClient = WebClient.builder()
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + API_KEY)
+                .build();
+    }
 
     public List<MenuItemResponse> analyzeImages(String imageUrl) {
-        // Gson 객체 생성
-        Gson gson = new Gson();
-
-        // RestTemplate 초기화
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + API_KEY);
-
         // JSON 요청 본문 생성
         String requestBody = buildRequestBody(imageUrl);
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-        try {
-            // OpenAI API 호출
-            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
-                    OPENAI_API_URL,
-                    HttpMethod.POST,
-                    entity,
-                    byte[].class
-            );
+        // OPENAI API 호출
+        Mono<String> responsemono = webClient.post()
+                .uri("https://api.openai.com/v1/chat/completions")
+                .header("Content-Type", "application/json")
+                .bodyValue(requestBody)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .doOnNext(errorBody -> System.err.println("Error Body: " + errorBody))
+                            .flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody)));
+                })
+                .bodyToMono(String.class);
 
-            //응답 데이터를 UTF-8로 인코딩
-            String responsebody = new String(responseEntity.getBody(), StandardCharsets.UTF_8);
-            List<MenuItemResponse> menuItemResponses = parseResponse(responsebody);
-            return menuItemResponses;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("OpenAI API 호출 실패", e);
-        }
+         return processResponse(responsemono);
     }
 
     private String buildRequestBody(String imageUrl) {
+        // 이미지 base64로 압축
+        String base64Image = ImageUtil.compressImage(imageUrl);
+
         // 요청 본문 생성
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-4o");
@@ -81,27 +71,28 @@ public class OpenAiUtil {
         Map<String, Object> textContent = new HashMap<>();
         textContent.put("type", "text");
         textContent.put("text",
-                "다음 이미지는 한국어로 작성된 메뉴판입니다. 메뉴판에서 각 메뉴와 가격을 짝지어 반환해 주세요. " +
-                "추가로, 각 메뉴의 일반화된 이름, 간단한 소개, 알레르기 유발 성분 정보, 맵기 수준(spicyLevel)을 함께 반환해 주세요.\n\n" +
-                "일반화된 이름(generalizedName)은 메뉴의 특정한 이름을 보다 간단하게 표현한 이름입니다. " +
-                "예를 들어, '홈메이드 크리스피 춘권'이라는 메뉴는 '춘권'으로 일반화될 수 있습니다. " +
-                "이 정보는 사용자가 메뉴의 본질을 쉽게 이해하고 유사한 메뉴를 그룹화하거나 비교할 수 있도록 도와줍니다." +
-                "- 가격이 \"무료\"로 표시된 경우에는 0으로 처리해 주세요.\n" +
-                "- 가격이 '6.0'과 같이 축약된 경우에는 반드시 원 단위로 변환하여 숫자만 반환해 주세요. 예: '6.0' → '6000'.\n" +
-                "- 맵기 수준(spicyLevel)은 1~5까지 숫자로 표현해 주세요. (예: '매움' → '5', '중간' → '3', '안 매움' → '1')\n\n" +
-                "- 설명(description)은 10-30자 정도로 작성해 주세요." +
-                "결과 형식은 다음과 같습니다:\n" +
+                "The following image is a menu written in Korean. Please extract each menu item and its price and return them as a pair. " +
+                "Additionally, include the generalized name, a brief description, allergy information, and spiciness level (spicyLevel) for each menu item.\n\n" +
+                "The generalized name represents a simplified version of the menu item’s name. " +
+                "For example, 'Homemade Crispy Spring Rolls' could be generalized to 'Spring Rolls'. " +
+                "This information helps users easily understand the essence of the menu and compare or group similar items." +
+                "- If the price is displayed as \"free,\" please process it as 0.\n" +
+                "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
+                "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '3', 'Not Spicy' → '0')\n\n" +
+                "- The description should be between 10 and 30 characters long." +
+                "- The description and allergy information must be detailed and easy for foreigners to understand." +
+                "The result format should be as follows:\n" +
                 "[\n" +
                 "  {\n" +
-                "    \"menuName\": \"메뉴 이름\",           // 메뉴판에 표시된 이름\n" +
-                "    \"price\": \"가격 (숫자만)\",           // 숫자 형태의 가격\n" +
-                "    \"generalizedName\": \"일반화된 이름\", // 간단히 일반화된 이름\n" +
-                "    \"description\": \"간단한 소개\",       // 메뉴 설명\n" +
-                "    \"allergy\": \"알레르기 정보\",     // 알레르기 유발 성분\n" +
-                "    \"spicyLevel\": \"맵기 수준 (1-5 숫자)\" // 맵기 정도 (숫자로 반환)\n" +
+                "    \"menuName\": \"Menu name\",            // The name as shown on the menu\n" +
+                "    \"price\": \"Price (numeric only)\",    // Numeric price\n" +
+                "    \"generalizedName\": \"Generalized name\", // Simplified generalized name\n" +
+                "    \"description\": \"Brief description\", // Short description of the menu item\n" +
+                "    \"allergy\": \"Allergy information\",   // Allergy-causing ingredients\n" +
+                "    \"spicyLevel\": \"Spiciness level (1-5)\" // Spiciness level (as a number)\n" +
                 "  }\n" +
                 "]\n\n" +
-                "예시:\n" +
+                "Example:\n" +
                 "[\n" +
                 "  {\n" +
                 "    \"menuName\": \"아메리카노\",\n" +
@@ -109,7 +100,7 @@ public class OpenAiUtil {
                 "    \"generalizedName\": \"아메리카노\",\n" +
                 "    \"description\": \"에스프레소에 물을 추가한 커피\",\n" +
                 "    \"allergy\": \"없음\",\n" +
-                "    \"spicyLevel\": \"1\"\n" +
+                "    \"spicyLevel\": \"0\"\n" +
                 "  },\n" +
                 "  {\n" +
                 "    \"menuName\": \"매운 해물찜\",\n" +
@@ -121,13 +112,14 @@ public class OpenAiUtil {
                 "  }\n" +
                 "]");
 
+
         contentList.add(textContent);
 
         // 이미지 URL 객체 추가
         Map<String, Object> imageContent = new HashMap<>();
         imageContent.put("type", "image_url");
         Map<String, String> imageUrlMap = new HashMap<>();
-        imageUrlMap.put("url", imageUrl);
+        imageUrlMap.put("url", "data:image/jpeg;base64," + base64Image);
         imageContent.put("image_url", imageUrlMap);
         contentList.add(imageContent);
 
@@ -146,26 +138,25 @@ public class OpenAiUtil {
         return gson.toJson(requestBody);
     }
 
-    private List<MenuItemResponse> parseResponse(String responseBody) {
+    private List<MenuItemResponse> processResponse(Mono<String> responseMono) throws CustomException {
         List<MenuItemResponse> menuItems = new ArrayList<>();
-        try {
-            Gson gson = new Gson();
 
-            JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
+        try {
+            String response = responseMono.block();
+            JsonObject root = JsonParser.parseString(response).getAsJsonObject();
             JsonArray choices = root.getAsJsonArray("choices");
 
-            if (choices.size() > 0) {
-                JsonObject choice = choices.get(0).getAsJsonObject();
-                JsonObject message = choice.getAsJsonObject("message");
+            if (choices != null && choices.size() > 0) {
+                JsonObject message = choices.get(0).getAsJsonObject().getAsJsonObject("message");
                 String content = message.get("content").getAsString();
-                System.out.println(content);
+                String cleanedContent = content.replace("```json", "").replace("```", "").trim();
 
-                // content 내부의 JSON 배열 추출
-                String replaced = content.replace("```json", "").replace("```", "");
+                // `MenuItemResponse` 리스트로 변환
+                Gson gson = new Gson();
                 Type listType = new TypeToken<List<MenuItemResponse>>() {}.getType();
-                menuItems = gson.fromJson(replaced, listType);
+                menuItems.addAll(gson.fromJson(cleanedContent, listType));
             }
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
             throw new CustomException(ErrorCode.JSON_MAPPING_ERROR);
         }
 

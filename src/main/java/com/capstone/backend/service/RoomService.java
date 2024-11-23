@@ -3,22 +3,23 @@ package com.capstone.backend.service;
 import com.capstone.backend.dto.request.MenuImageUploadRequest;
 import com.capstone.backend.dto.request.RoomAddMemberRequest;
 import com.capstone.backend.dto.response.MemberResponse;
-import com.capstone.backend.dto.response.MenuItemResponse;
 import com.capstone.backend.dto.response.RoomResponse;
 import com.capstone.backend.entity.*;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.capstone.backend.repository.*;
+import com.capstone.backend.utils.AsyncUtil;
 import com.capstone.backend.utils.OpenAiUtil;
-import com.capstone.backend.utils.S3Util;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
@@ -29,8 +30,8 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
     private final OpenAiUtil openAiUtil;
-    private final S3Util s3Util;
     private final SessionUtil sessionUtil;
+    private final AsyncUtil asyncUtil;
 
     public Room getRoomById(Long roomId) throws CustomException {
         return roomRepository.findById(roomId)
@@ -45,60 +46,25 @@ public class RoomService {
     }
 
     public void uploadMenuBoardImage(Room room, MenuImageUploadRequest request) throws CustomException {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         List<String> imageUrls = request.getImageUrls();
+
         for (String imageUrl : imageUrls) {
-            MenuImage menuImage = MenuImage.builder()
-                    .room(room)
-                    .imageUrl(imageUrl)
-                    .status("normal")
-                    .build();
-
-            menuImageRepository.save(menuImage);
-
-            List<MenuItemResponse> menuItemResponses = openAiUtil.analyzeImages(imageUrl);
-            for (MenuItemResponse menuItemResponse : menuItemResponses) {
-                Menu menu = Menu.builder()
-                        .room(room)
-                        .image(menuImage)
-                        .menuName(menuItemResponse.getMenuName())
-                        .price(Integer.parseInt(menuItemResponse.getPrice()))
-                        .status(menuItemResponse.getDescription())
-                        .build();
-
-                menuRepository.save(menu);
-            }
+            futures.add(asyncUtil.processImage(imageUrl, room));
         }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
     public void uploadMenuBoardImageFormData(Room room, List<MultipartFile> images) throws CustomException {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         for (MultipartFile image : images) {
-            String imageUrl = s3Util.uploadImage(image);
-
-            MenuImage menuImage = MenuImage.builder()
-                    .room(room)
-                    .imageUrl(imageUrl)
-                    .status("normal")
-                    .build();
-
-            menuImageRepository.save(menuImage);
-
-            List<MenuItemResponse> menuItemResponses = openAiUtil.analyzeImages(imageUrl);
-            for (MenuItemResponse menuItemResponse : menuItemResponses) {
-                Menu menu = Menu.builder()
-                        .room(room)
-                        .image(menuImage)
-                        .menuName(menuItemResponse.getMenuName())
-                        .price(Integer.parseInt(menuItemResponse.getPrice()))
-                        .description(menuItemResponse.getDescription())
-                        .status("added")
-                        .generalizedName(menuItemResponse.getGeneralizedName())
-                        .allergy(menuItemResponse.getAllergy())
-                        .spicyLevel(menuItemResponse.getSpicyLevel())
-                        .build();
-
-                menuRepository.save(menu);
-            }
+            String imageUrl = asyncUtil.convertImage(image);
+            futures.add(asyncUtil.processImage(imageUrl, room));
         }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
     public Member addMemberToRoom(Room room, RoomAddMemberRequest request) throws CustomException {
