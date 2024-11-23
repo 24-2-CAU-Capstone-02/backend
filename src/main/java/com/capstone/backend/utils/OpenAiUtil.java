@@ -5,10 +5,7 @@ import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +14,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -25,45 +24,32 @@ import java.util.*;
 @Component
 public class OpenAiUtil {
 
-    private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    private final WebClient webClient;
 
-    @Value("${api-key.gpt}")
-    private String API_KEY;
-
+    public OpenAiUtil(@Value("${api-key.gpt}") String API_KEY) {
+        this.webClient = WebClient.builder()
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + API_KEY)
+                .build();
+    }
 
     public List<MenuItemResponse> analyzeImages(String imageUrl) {
-        // Gson 객체 생성
-        Gson gson = new Gson();
-
-        // RestTemplate 초기화
-        RestTemplate restTemplate = new RestTemplate();
-
-        // 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + API_KEY);
-
         // JSON 요청 본문 생성
         String requestBody = buildRequestBody(imageUrl);
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-        try {
-            // OpenAI API 호출
-            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
-                    OPENAI_API_URL,
-                    HttpMethod.POST,
-                    entity,
-                    byte[].class
-            );
+        // OPENAI API 호출
+        Mono<String> responsemono = webClient.post()
+                .uri("https://api.openai.com/v1/chat/completions")
+                .header("Content-Type", "application/json")
+                .bodyValue(requestBody)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .doOnNext(errorBody -> System.err.println("Error Body: " + errorBody))
+                            .flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody)));
+                })
+                .bodyToMono(String.class);
 
-            //응답 데이터를 UTF-8로 인코딩
-            String responsebody = new String(responseEntity.getBody(), StandardCharsets.UTF_8);
-            List<MenuItemResponse> menuItemResponses = parseResponse(responsebody);
-            return menuItemResponses;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("OpenAI API 호출 실패", e);
-        }
+         return processResponse(responsemono);
     }
 
     private String buildRequestBody(String imageUrl) {
@@ -152,26 +138,25 @@ public class OpenAiUtil {
         return gson.toJson(requestBody);
     }
 
-    private List<MenuItemResponse> parseResponse(String responseBody) {
+    private List<MenuItemResponse> processResponse(Mono<String> responseMono) throws CustomException {
         List<MenuItemResponse> menuItems = new ArrayList<>();
-        try {
-            Gson gson = new Gson();
 
-            JsonObject root = JsonParser.parseString(responseBody).getAsJsonObject();
+        try {
+            String response = responseMono.block();
+            JsonObject root = JsonParser.parseString(response).getAsJsonObject();
             JsonArray choices = root.getAsJsonArray("choices");
 
-            if (choices.size() > 0) {
-                JsonObject choice = choices.get(0).getAsJsonObject();
-                JsonObject message = choice.getAsJsonObject("message");
+            if (choices != null && choices.size() > 0) {
+                JsonObject message = choices.get(0).getAsJsonObject().getAsJsonObject("message");
                 String content = message.get("content").getAsString();
-                System.out.println(content);
+                String cleanedContent = content.replace("```json", "").replace("```", "").trim();
 
-                // content 내부의 JSON 배열 추출
-                String replaced = content.replace("```json", "").replace("```", "");
+                // `MenuItemResponse` 리스트로 변환
+                Gson gson = new Gson();
                 Type listType = new TypeToken<List<MenuItemResponse>>() {}.getType();
-                menuItems = gson.fromJson(replaced, listType);
+                menuItems.addAll(gson.fromJson(cleanedContent, listType));
             }
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
             throw new CustomException(ErrorCode.JSON_MAPPING_ERROR);
         }
 
