@@ -19,7 +19,8 @@ public enum ErrorCode {
     MENU_ALREADY_EXISTED(HttpStatus.BAD_REQUEST, "DB-004", "이미 DB에 Menu가 존재합니다."),
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-005", "DB에서 Room을 찾을 수 없습니다."),
     ROOM_ALREADY_EXISTED(HttpStatus.BAD_REQUEST, "DB-006", "이미 DB에 Room이 존재합니다."),
-    MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-005", "DB에서 MenuImage를 찾을 수 없습니다."),
+    MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-007", "DB에서 MenuImage를 찾을 수 없습니다."),
+    MENU_IMAGE_TOO_MANY(HttpStatus.TOO_MANY_REQUESTS, "DB-008", "Room에 등록되는 이미지 개수가 5개 제한을 초과합니다."),
 
     // MAPPING
     MAPPING_ERROR(HttpStatus.BAD_REQUEST, "MAPPING-001", "Response 매핑에 실패했습니다."),
