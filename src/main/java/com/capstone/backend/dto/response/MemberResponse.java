@@ -10,12 +10,14 @@ import lombok.Getter;
 @Builder
 public class MemberResponse {
     private Long id;
+    private String sessionToken;
     private String username;
 
     public static MemberResponse getMemberResponse(Member member) throws CustomException {
         try {
             return MemberResponse.builder()
                     .id(member.getId())
+                    .sessionToken(member.getSessionToken())
                     .username(member.getUsername())
                     .build();
         } catch (Exception e) {

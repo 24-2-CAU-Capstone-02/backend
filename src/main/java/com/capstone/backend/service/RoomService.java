@@ -10,6 +10,7 @@ import com.capstone.backend.exception.ErrorCode;
 import com.capstone.backend.repository.*;
 import com.capstone.backend.utils.AsyncUtil;
 import com.capstone.backend.utils.OpenAiUtil;
+import com.capstone.backend.utils.S3Util;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
     private final OpenAiUtil openAiUtil;
+    private final S3Util s3Util;
     private final SessionUtil sessionUtil;
     private final AsyncUtil asyncUtil;
 
@@ -46,8 +48,13 @@ public class RoomService {
     }
 
     public void uploadMenuBoardImage(Room room, MenuImageUploadRequest request) throws CustomException {
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<MenuImage> menuImages = menuImageRepository.findAllByRoom(room);
         List<String> imageUrls = request.getImageUrls();
+        if (menuImages.size() + imageUrls.size() > 5) {
+            throw new CustomException(ErrorCode.MENU_IMAGE_TOO_MANY);
+        }
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (String imageUrl : imageUrls) {
             futures.add(asyncUtil.processImage(imageUrl, room));
@@ -57,10 +64,15 @@ public class RoomService {
     }
 
     public void uploadMenuBoardImageFormData(Room room, List<MultipartFile> images) throws CustomException {
+        List<MenuImage> menuImages = menuImageRepository.findAllByRoom(room);
+        if (menuImages.size() + images.size() > 5) {
+            throw new CustomException(ErrorCode.MENU_IMAGE_TOO_MANY);
+        }
+
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (MultipartFile image : images) {
-            String imageUrl = asyncUtil.convertImage(image);
+            String imageUrl = s3Util.uploadImage(image);
             futures.add(asyncUtil.processImage(imageUrl, room));
         }
 
