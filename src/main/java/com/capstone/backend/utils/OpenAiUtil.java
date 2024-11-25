@@ -54,7 +54,7 @@ public class OpenAiUtil {
 
     private String buildRequestBody(String imageUrl) {
         // 이미지 base64로 압축
-        String base64Image = ImageUtil.compressImage(imageUrl);
+//        String base64Image = ImageUtil.compressImage(imageUrl);
 
         // 요청 본문 생성
         Map<String, Object> requestBody = new HashMap<>();
@@ -119,7 +119,8 @@ public class OpenAiUtil {
         Map<String, Object> imageContent = new HashMap<>();
         imageContent.put("type", "image_url");
         Map<String, String> imageUrlMap = new HashMap<>();
-        imageUrlMap.put("url", "data:image/jpeg;base64," + base64Image);
+//        imageUrlMap.put("url", "data:image/jpeg;base64," + base64Image);
+        imageUrlMap.put("url", imageUrl);
         imageContent.put("image_url", imageUrlMap);
         contentList.add(imageContent);
 
