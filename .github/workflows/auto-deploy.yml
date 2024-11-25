@@ -53,5 +53,5 @@ jobs:
             FILE_NAME="logs/capstone-deploy.log"
             kill $(ps -ef | grep 'capstone-deploy.jar' | grep -v grep | awk '{print $2}')
             sleep 5
-            nohup java -jar capstone-deploy.jar >> ${FILE_NAME} 2>&1 &
+            nohup java -jar capstone-deploy.jar > ${FILE_NAME} 2>&1 &
             sleep 5
