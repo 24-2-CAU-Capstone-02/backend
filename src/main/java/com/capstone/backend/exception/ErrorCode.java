@@ -11,6 +11,8 @@ public enum ErrorCode {
     SESSION_TOKEN_IS_INVALID(HttpStatus.UNAUTHORIZED, "AUTH-001", "세션 토큰이 유효하지 않습니다."),
     MEMBER_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-002", "권한이 없습니다."),
     PASSWORD_NOT_CORRECT(HttpStatus.UNAUTHORIZED, "AUTH-003", "비밀번호가 일치하지 않습니다."),
+    GOOGLE_FETCH_ACCESS_TOKEN_FAIL(HttpStatus.UNAUTHORIZED, "AUTH-004", "구글에서 Access Token을 받아오는 데에 실패하였습니다."),
+    GOOGLE_FETCH_USER_DATA_FAIL(HttpStatus.UNAUTHORIZED, "AUTH-005", "구글에서 사용자 정보를 받아오는 데에 실패하였습니다."),
 
     // DB
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-001", "DB에서 Member를 찾을 수 없습니다."),
@@ -21,6 +23,8 @@ public enum ErrorCode {
     ROOM_ALREADY_EXISTED(HttpStatus.BAD_REQUEST, "DB-006", "이미 DB에 Room이 존재합니다."),
     MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-007", "DB에서 MenuImage를 찾을 수 없습니다."),
     MENU_IMAGE_TOO_MANY(HttpStatus.TOO_MANY_REQUESTS, "DB-008", "Room에 등록되는 이미지 개수가 5개 제한을 초과합니다."),
+    MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-007", "DB에서 MenuImage를 찾을 수 없습니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-008", "DB에서 Account를 찾을 수 없습니다."),
 
     // MAPPING
     MAPPING_ERROR(HttpStatus.BAD_REQUEST, "MAPPING-001", "Response 매핑에 실패했습니다."),
@@ -33,6 +37,9 @@ public enum ErrorCode {
 
     // IMAGE
     IMAGE_COMPRESS_FAILED(HttpStatus.BAD_REQUEST, "IMAGE-001", "이미지 압축에 실패했습니다."),
+
+    // REQUEST
+    EXCEEDED_DAILY_ROOM_LIMIT(HttpStatus.BAD_REQUEST, "REQUEST-001", "하루에 만들 수 있는 방의 개수를 초과했습니다."),
 
     DUMMY_ERROR_CODE(HttpStatus.OK, "DUMMY", "DUMMY_ERROR_CODE");
 

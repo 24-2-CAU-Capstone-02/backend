@@ -18,10 +18,6 @@ public class Member {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
-
     @Column(nullable = false)
     private String username;
 

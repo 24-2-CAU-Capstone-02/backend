@@ -14,9 +14,11 @@ import com.capstone.backend.utils.S3Util;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,18 +32,39 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MenuImageRepository menuImageRepository;
+    private final AccountRepository accountRepository;
     private final OpenAiUtil openAiUtil;
     private final S3Util s3Util;
     private final SessionUtil sessionUtil;
     private final AsyncUtil asyncUtil;
+
+    private final int DAILY_ROOM_LIMIT = 2;
 
     public Room getRoomById(Long roomId) throws CustomException {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
     }
 
-    public Room createRoom() throws CustomException {
-        Room room = Room.builder().build();
+    public Room createRoom(UserDetails userDetails) throws CustomException {
+        Account account = accountRepository.findByGoogleId(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        LocalDate today = LocalDate.now();
+        if (today.equals(account.getLastRoomCreatedDate())) {
+            if (account.getDailyRoomCount() >= DAILY_ROOM_LIMIT) {
+                throw new CustomException(ErrorCode.EXCEEDED_DAILY_ROOM_LIMIT);
+            }
+        } else {
+            account.setLastRoomCreatedDate(today);
+            account.resetDailyRoomCount();
+        }
+
+        Room room = Room.builder()
+                .account(account)
+                .build();
+        account.incrementDailyRoomCount();
+
+        accountRepository.save(account);
         roomRepository.save(room);
 
         return room;
