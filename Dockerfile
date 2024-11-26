@@ -1,4 +1,4 @@
-FROM openjdk:21-slim
+FROM openjdk:17-slim
 WORKDIR /app
 COPY . .
 RUN chmod +x ./gradlew
