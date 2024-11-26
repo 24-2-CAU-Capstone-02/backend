@@ -22,9 +22,7 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-005", "DB에서 Room을 찾을 수 없습니다."),
     ROOM_ALREADY_EXISTED(HttpStatus.BAD_REQUEST, "DB-006", "이미 DB에 Room이 존재합니다."),
     MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-007", "DB에서 MenuImage를 찾을 수 없습니다."),
-    MENU_IMAGE_TOO_MANY(HttpStatus.TOO_MANY_REQUESTS, "DB-008", "Room에 등록되는 이미지 개수가 5개 제한을 초과합니다."),
-    MENU_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-007", "DB에서 MenuImage를 찾을 수 없습니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-008", "DB에서 Account를 찾을 수 없습니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "DB-009", "DB에서 Account를 찾을 수 없습니다."),
 
     // MAPPING
     MAPPING_ERROR(HttpStatus.BAD_REQUEST, "MAPPING-001", "Response 매핑에 실패했습니다."),
@@ -40,6 +38,7 @@ public enum ErrorCode {
 
     // REQUEST
     EXCEEDED_DAILY_ROOM_LIMIT(HttpStatus.BAD_REQUEST, "REQUEST-001", "하루에 만들 수 있는 방의 개수를 초과했습니다."),
+    MENU_IMAGE_TOO_MANY(HttpStatus.TOO_MANY_REQUESTS, "REQUEST-002", "Room에 등록되는 이미지 개수가 제한을 초과합니다."),
 
     DUMMY_ERROR_CODE(HttpStatus.OK, "DUMMY", "DUMMY_ERROR_CODE");
 
