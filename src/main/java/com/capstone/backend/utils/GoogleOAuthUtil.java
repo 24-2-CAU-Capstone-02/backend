@@ -35,6 +35,8 @@ public class GoogleOAuthUtil {
         params.add("client_secret", clientSecret);
         params.add("code", code);
 
+        System.out.println(redirectUrl);
+
         HttpEntity<?> http = new HttpEntity<>(params, headers);
         URI uri = new URI(googleOauthUrl);
 

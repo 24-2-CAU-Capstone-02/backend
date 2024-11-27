@@ -10,9 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // log 파일
-        registry.addResourceHandler("/logs/**")
-                .addResourceLocations("file:./logs/")
-                .resourceChain(true)
-                .addResolver(new EncodedResourceResolver());
+        registry.addResourceHandler("/log/**")
+                .addResourceLocations("file:/app/build/libs/logs/");
     }
 }
