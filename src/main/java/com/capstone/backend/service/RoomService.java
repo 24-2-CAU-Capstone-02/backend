@@ -35,7 +35,7 @@ public class RoomService {
     private final SessionUtil sessionUtil;
     private final AsyncUtil asyncUtil;
 
-    private final int DAILY_ROOM_LIMIT = 2;
+    private final int DAILY_ROOM_LIMIT = 99;
     private final int ROOM_MENU_IMAGE_LIMIT = 5;
 
     public Room getRoomById(Long roomId) throws CustomException {
