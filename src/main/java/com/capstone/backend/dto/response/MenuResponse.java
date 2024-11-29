@@ -8,12 +8,13 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
 public class MenuResponse {
     private Long id;
-    private Long roomId;
+    private UUID roomId;
     private Long imageId;
     private String menuName;
     private Integer price;

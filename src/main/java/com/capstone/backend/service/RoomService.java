@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -38,7 +39,7 @@ public class RoomService {
     private final int DAILY_ROOM_LIMIT = 99;
     private final int ROOM_MENU_IMAGE_LIMIT = 5;
 
-    public Room getRoomById(Long roomId) throws CustomException {
+    public Room getRoomById(UUID roomId) throws CustomException {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
     }
