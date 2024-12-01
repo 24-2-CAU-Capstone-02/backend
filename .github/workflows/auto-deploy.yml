@@ -23,4 +23,4 @@ jobs:
             cd spring
             git pull
             cd ..
-            docker compose up -d --build
+            docker compose up -d --build --scale websocket=10
