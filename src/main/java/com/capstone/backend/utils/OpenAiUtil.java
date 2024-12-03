@@ -72,45 +72,95 @@ public class OpenAiUtil {
         textContent.put("type", "text");
         textContent.put("text",
                 "The following image is a menu written in Korean. Please extract each menu item and its price and return them as a pair. " +
-                "Additionally, include the generalized name, a brief description, allergy information, and spiciness level (spicyLevel) for each menu item.\n\n" +
-                "The generalized name represents a simplified version of the menu item’s name. " +
-                "For example, 'Homemade Crispy Spring Rolls' could be generalized to 'Spring Rolls'. " +
-                "This information helps users easily understand the essence of the menu and compare or group similar items." +
-                "- If the price is displayed as \"free,\" please process it as 0.\n" +
-                "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
-                "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '3', 'Not Spicy' → '0')\n\n" +
-                "- The description should be between 10 and 30 characters long." +
-                "- The description and allergy information must be detailed and easy for foreigners to understand." +
-                "The result format should be as follows:\n" +
-                "[\n" +
-                "  {\n" +
-                "    \"menuName\": \"Menu name\",            // The name as shown on the menu\n" +
-                "    \"price\": \"Price (numeric only)\",    // Numeric price\n" +
-                "    \"generalizedName\": \"Generalized name\", // Simplified generalized name\n" +
-                "    \"description\": \"Brief description\", // Short description of the menu item\n" +
-                "    \"allergy\": \"Allergy information\",   // Allergy-causing ingredients\n" +
-                "    \"spicyLevel\": \"Spiciness level (1-5)\" // Spiciness level (as a number)\n" +
-                "  }\n" +
-                "]\n\n" +
-                "Example:\n" +
-                "[\n" +
-                "  {\n" +
-                "    \"menuName\": \"아메리카노\",\n" +
-                "    \"price\": \"0\",\n" +
-                "    \"generalizedName\": \"아메리카노\",\n" +
-                "    \"description\": \"에스프레소에 물을 추가한 커피\",\n" +
-                "    \"allergy\": \"없음\",\n" +
-                "    \"spicyLevel\": \"0\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"menuName\": \"매운 해물찜\",\n" +
-                "    \"price\": \"12000\",\n" +
-                "    \"generalizedName\": \"해물찜\",\n" +
-                "    \"description\": \"고춧가루를 사용한 매운 양념과 조개, 오징어, 새우 등의 해물을 곁들인 찜 요리\",\n" +
-                "    \"allergy\": \"조개류 포함\",\n" +
-                "    \"spicyLevel\": \"5\"\n" +
-                "  }\n" +
-                "]");
+                        "Additionally, include the generalized name, a brief description, allergy information, and spiciness level (spicyLevel) for each menu item.\n\n" +
+                        "The generalized name represents a simplified version of the menu item’s name but should still be specific enough to describe the unique identity of the dish, commonly understood by people. " +
+                        "For example, 'Homemade Crispy Spring Rolls' could be generalized to 'Crispy Spring Rolls' rather than just 'Spring Rolls'. " +
+                        "Similarly, '된장찌개' should be generalized to '된장찌개' (Soybean Paste Stew) and '김치찌개' should be generalized to '김치찌개' (Kimchi Stew) rather than just '찌개'. " +
+                        "This ensures the name is specific and recognizable.\n\n" +
+                        "- If the price is displayed as 'free,' please process it as 0.\n" +
+                        "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
+                        "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '3', 'Not Spicy' → '0').\n\n" +
+                        "- The description should be specific explanation and between 10 and 30 characters long.\n" +
+                        "- The description and allergy information must be detailed.\n\n" +
+                        "The result format should be as follows:\n" +
+                        "[\n" +
+                        " {\n" +
+                        " \"menuName\": \"Menu name\", // The name as shown on the menu\n" +
+                        " \"price\": \"Price (numeric only)\", // Numeric price\n" +
+                        " \"generalizedName\": \"Generalized name\", // Simplified generalized name\n" +
+                        " \"description\": \"Brief description\", // Short description of the menu item\n" +
+                        " \"allergy\": \"Allergy information\", // Allergy-causing ingredients\n" +
+                        " \"spicyLevel\": \"Spiciness level (0-5)\" // Spiciness level (as a number)\n" +
+                        " }\n" +
+                        "]\n\n" +
+                        "Example:\n" +
+                        "[\n" +
+                        " {\n" +
+                        " \"menuName\": \"아메리카노\",\n" +
+                        " \"price\": \"0\",\n" +
+                        " \"generalizedName\": \"아메리카노\",\n" +
+                        " \"description\": \"에스프레소에 물을 추가한 커피\",\n" +
+                        " \"allergy\": \"없음\",\n" +
+                        " \"spicyLevel\": \"0\"\n" +
+                        " },\n" +
+                        " {\n" +
+                        " \"menuName\": \"된장찌개\",\n" +
+                        " \"price\": \"8000\",\n" +
+                        " \"generalizedName\": \"된장찌개\",\n" +
+                        " \"description\": \"된장과 야채를 넣어 끓인 찌개 요리\",\n" +
+                        " \"allergy\": \"대두 포함\",\n" +
+                        " \"spicyLevel\": \"1\"\n" +
+                        " },\n" +
+                        " {\n" +
+                        " \"menuName\": \"김치찌개\",\n" +
+                        " \"price\": \"9000\",\n" +
+                        " \"generalizedName\": \"김치찌개\",\n" +
+                        " \"description\": \"김치와 돼지고기를 넣어 끓인 매콤한 찌개\",\n" +
+                        " \"allergy\": \"돼지고기 포함\",\n" +
+                        " \"spicyLevel\": \"3\"\n" +
+                        " }\n" +
+                        "]"
+//                "The following image is a menu written in Korean. Please extract each menu item and its price and return them as a pair. " +
+//                "Additionally, include the generalized name, a brief description, allergy information, and spiciness level (spicyLevel) for each menu item.\n\n" +
+//                "The generalized name represents a simplified version of the menu item’s name. " +
+//                "For example, 'Homemade Crispy Spring Rolls' could be generalized to 'Spring Rolls'. " +
+//                "This information helps users easily understand the essence of the menu and compare or group similar items." +
+//                "- If the price is displayed as \"free,\" please process it as 0.\n" +
+//                "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
+//                "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '3', 'Not Spicy' → '0')\n\n" +
+//                "- The description should be between 10 and 30 characters long." +
+//                "- The description and allergy information must be detailed and easy for foreigners to understand." +
+//                "The result format should be as follows:\n" +
+//                "[\n" +
+//                "  {\n" +
+//                "    \"menuName\": \"Menu name\",            // The name as shown on the menu\n" +
+//                "    \"price\": \"Price (numeric only)\",    // Numeric price\n" +
+//                "    \"generalizedName\": \"Generalized name\", // Simplified generalized name\n" +
+//                "    \"description\": \"Brief description\", // Short description of the menu item\n" +
+//                "    \"allergy\": \"Allergy information\",   // Allergy-causing ingredients\n" +
+//                "    \"spicyLevel\": \"Spiciness level (1-5)\" // Spiciness level (as a number)\n" +
+//                "  }\n" +
+//                "]\n\n" +
+//                "Example:\n" +
+//                "[\n" +
+//                "  {\n" +
+//                "    \"menuName\": \"아메리카노\",\n" +
+//                "    \"price\": \"0\",\n" +
+//                "    \"generalizedName\": \"아메리카노\",\n" +
+//                "    \"description\": \"에스프레소에 물을 추가한 커피\",\n" +
+//                "    \"allergy\": \"없음\",\n" +
+//                "    \"spicyLevel\": \"0\"\n" +
+//                "  },\n" +
+//                "  {\n" +
+//                "    \"menuName\": \"매운 해물찜\",\n" +
+//                "    \"price\": \"12000\",\n" +
+//                "    \"generalizedName\": \"해물찜\",\n" +
+//                "    \"description\": \"고춧가루를 사용한 매운 양념과 조개, 오징어, 새우 등의 해물을 곁들인 찜 요리\",\n" +
+//                "    \"allergy\": \"조개류 포함\",\n" +
+//                "    \"spicyLevel\": \"5\"\n" +
+//                "  }\n" +
+//                "]"
+        );
 
 
         contentList.add(textContent);
