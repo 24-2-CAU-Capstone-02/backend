@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
+
 @Component
 public class NaverUtil {
     @Value("${naver.api.client_id}")
@@ -51,6 +53,8 @@ public class NaverUtil {
                 return "";
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
             throw new CustomException(ErrorCode.NAVER_API_ERROR);
         }
     }
