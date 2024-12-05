@@ -46,7 +46,10 @@ public class NaverUtil {
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             JsonNode itemsNode = rootNode.path("items");
             if (itemsNode.isArray() && !itemsNode.isEmpty()) {
-                return itemsNode.get(0).path("link").asText();
+                String imageUrl = itemsNode.get(0).path("link").asText();
+                System.out.println(rootNode);
+                System.out.println(imageUrl);
+                return imageUrl;
             } else {
                 return "";
             }
