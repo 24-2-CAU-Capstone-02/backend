@@ -53,8 +53,7 @@ public class NaverUtil {
                 return "";
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(keyword + ", " + e.getMessage());
             throw new CustomException(ErrorCode.NAVER_API_ERROR);
         }
     }
