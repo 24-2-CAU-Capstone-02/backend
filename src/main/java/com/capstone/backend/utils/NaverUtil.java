@@ -23,7 +23,7 @@ public class NaverUtil {
 
     public String getImageUrl(String keyword) throws CustomException {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(imageSearchUrl)
-                .queryParam("query", keyword + " 음식사진")
+                .queryParam("query", keyword)
                 .queryParam("display", 1)
                 .queryParam("start", 1)
                 .queryParam("sort", "sim");
