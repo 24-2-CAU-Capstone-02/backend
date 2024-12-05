@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 @Component
 public class NaverUtil {
     @Value("${naver.api.client_id}")
@@ -25,16 +22,11 @@ public class NaverUtil {
     private final String imageSearchUrl = "https://openapi.naver.com/v1/search/image";
 
     public String getImageUrl(String keyword) throws CustomException {
-        String query = URLEncoder.encode(keyword + " 음식사진", StandardCharsets.UTF_8);
-        System.out.println(keyword + " 음식사진");
-        System.out.println(query);
-
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(imageSearchUrl)
-                .queryParam("query", query)
+                .queryParam("query", keyword + " 음식사진")
                 .queryParam("display", 1)
                 .queryParam("start", 1)
                 .queryParam("sort", "sim");
-        System.out.println(uriBuilder);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", clientId);
@@ -53,13 +45,9 @@ public class NaverUtil {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             JsonNode itemsNode = rootNode.path("items");
-            System.out.println(rootNode);
             if (itemsNode.isArray() && !itemsNode.isEmpty()) {
-                String imageUrl = itemsNode.get(0).path("link").asText();
-                System.out.println("Link: " + imageUrl);
-                return imageUrl;
+                return itemsNode.get(0).path("link").asText();
             } else {
-                System.out.println("No items found in the response.");
                 return "";
             }
         } catch (Exception e) {
