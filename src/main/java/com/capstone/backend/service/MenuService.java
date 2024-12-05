@@ -1,6 +1,7 @@
 package com.capstone.backend.service;
 
 import com.capstone.backend.dto.request.MenuCreateRequest;
+import com.capstone.backend.dto.request.MenuImageUrlRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.entity.Member;
@@ -9,6 +10,7 @@ import com.capstone.backend.entity.Room;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.capstone.backend.repository.MenuRepository;
+import com.capstone.backend.utils.NaverUtil;
 import com.capstone.backend.utils.SessionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Objects;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final SessionUtil sessionUtil;
+    private final NaverUtil naverUtil;
 
     public Menu getMenuById(Long menuId) throws CustomException {
         return menuRepository.findById(menuId)
@@ -76,6 +79,10 @@ public class MenuService {
 
         menuRepository.save(menu);
         return menu;
+    }
+
+    public String getMenuImageUrl(MenuImageUrlRequest request) throws CustomException {
+        return naverUtil.getImageUrl(request.getMenuName());
     }
 
     private boolean isValidMemberWithMenu(Menu menu, Member member) {
