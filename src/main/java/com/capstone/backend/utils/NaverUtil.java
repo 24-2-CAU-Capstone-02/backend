@@ -36,7 +36,7 @@ public class NaverUtil {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                    uriBuilder.toUriString(),
+                    uriBuilder.build().toUriString(),
                     HttpMethod.GET,
                     new org.springframework.http.HttpEntity<>(headers),
                     String.class
@@ -46,10 +46,7 @@ public class NaverUtil {
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             JsonNode itemsNode = rootNode.path("items");
             if (itemsNode.isArray() && !itemsNode.isEmpty()) {
-                String imageUrl = itemsNode.get(0).path("link").asText();
-                System.out.println(rootNode);
-                System.out.println(imageUrl);
-                return imageUrl;
+                return itemsNode.get(0).path("link").asText();
             } else {
                 return "";
             }
