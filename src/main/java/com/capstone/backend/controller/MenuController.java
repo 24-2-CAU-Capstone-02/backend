@@ -40,7 +40,7 @@ public class MenuController {
     }
 
     @Operation(summary = "네이버 이미지 API 사용", description = "네이버 이미지 API로 메뉴의 이미지를 불러옵니다.")
-    @GetMapping("/image")
+    @PostMapping("/image")
     public ResponseEntity<MenuImageUrlResponse> getMenuImageUrl(@Valid @RequestBody MenuImageUrlRequest request) {
         String imageUrl = menuService.getMenuImageUrl(request);
         MenuImageUrlResponse response = MenuImageUrlResponse.builder().imageUrl(imageUrl).build();
