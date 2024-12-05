@@ -4,6 +4,7 @@ import com.capstone.backend.dto.request.MenuCreateRequest;
 import com.capstone.backend.dto.request.MenuImageUrlRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
+import com.capstone.backend.dto.response.MenuImageUrlResponse;
 import com.capstone.backend.entity.Member;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.entity.Room;
@@ -81,7 +82,7 @@ public class MenuService {
         return menu;
     }
 
-    public String getMenuImageUrl(MenuImageUrlRequest request) throws CustomException {
+    public MenuImageUrlResponse getMenuImageUrl(MenuImageUrlRequest request) throws CustomException {
         return naverUtil.getImageUrl(request.getMenuName());
     }
 

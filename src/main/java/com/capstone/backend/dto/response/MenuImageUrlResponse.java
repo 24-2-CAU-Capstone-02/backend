@@ -7,4 +7,5 @@ import lombok.Getter;
 @Builder
 public class MenuImageUrlResponse {
     private String imageUrl;
+    private String subUrl;
 }

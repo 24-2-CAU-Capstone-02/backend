@@ -1,5 +1,6 @@
 package com.capstone.backend.utils;
 
+import com.capstone.backend.dto.response.MenuImageUrlResponse;
 import com.capstone.backend.exception.CustomException;
 import com.capstone.backend.exception.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-
 @Component
 public class NaverUtil {
     @Value("${naver.api.client_id}")
@@ -23,7 +22,7 @@ public class NaverUtil {
 
     private final String imageSearchUrl = "https://openapi.naver.com/v1/search/image";
 
-    public String getImageUrl(String keyword) throws CustomException {
+    public MenuImageUrlResponse getImageUrl(String keyword) throws CustomException {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(imageSearchUrl)
                 .queryParam("query", keyword)
                 .queryParam("display", 1)
@@ -48,9 +47,15 @@ public class NaverUtil {
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             JsonNode itemsNode = rootNode.path("items");
             if (itemsNode.isArray() && !itemsNode.isEmpty()) {
-                return itemsNode.get(0).path("link").asText();
+                String imageUrl = itemsNode.get(0).path("link").asText();
+                String subUrl = itemsNode.get(0).path("thumbnail").asText();
+                return MenuImageUrlResponse.builder()
+                        .imageUrl(imageUrl)
+                        .subUrl(subUrl)
+                        .build();
             } else {
-                return "";
+                System.out.println("naver api response parsing error");
+                throw new CustomException(ErrorCode.NAVER_API_ERROR);
             }
         } catch (Exception e) {
             System.out.println(keyword + ", " + e.getMessage());
