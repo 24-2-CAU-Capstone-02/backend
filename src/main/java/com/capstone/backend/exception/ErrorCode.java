@@ -40,6 +40,9 @@ public enum ErrorCode {
     EXCEEDED_DAILY_ROOM_LIMIT(HttpStatus.BAD_REQUEST, "REQUEST-001", "하루에 만들 수 있는 방의 개수를 초과했습니다."),
     MENU_IMAGE_TOO_MANY(HttpStatus.TOO_MANY_REQUESTS, "REQUEST-002", "Room에 등록되는 이미지 개수가 제한을 초과합니다."),
 
+    // NAVER
+    NAVER_API_ERROR(HttpStatus.BAD_REQUEST, "NAVER-001", "네이버 API에 오류가 발생했습니다."),
+
     DUMMY_ERROR_CODE(HttpStatus.OK, "DUMMY", "DUMMY_ERROR_CODE");
 
     private final HttpStatus httpStatus;
