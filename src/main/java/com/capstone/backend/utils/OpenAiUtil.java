@@ -80,7 +80,7 @@ public class OpenAiUtil {
                         "- If the price is displayed as 'free,' please process it as 0.\n" +
                         "- If the price is abbreviated, such as '6.0,' be sure to convert it into whole Korean won and return only the numeric value. For example: '6.0' → '6000'.\n" +
                         "- The spiciness level (spicyLevel) should be expressed as a number from 0 to 5. (e.g., 'Spicy' → '5', 'Moderate' → '2', 'Not Spicy' → '0').\n\n" +
-                        "- The description must be specific explanation about what the food is.\n" +
+                        "- The description must provide a clear and detailed explanation of the food, including its ingredients, preparation method, appearance, and how it is typically consumed, ensuring that someone with no prior knowledge of the food can easily understand what it is.\n" +
                         "- Provide detailed allergy information about the dish. Include specific allergens (e.g., nuts, shellfish, dairy, gluten), cross-contamination risks, and any hidden ingredients that might contain allergens (e.g., soy in soy sauce, eggs in mayonnaise)." +
                         " Be sure to address less obvious allergens such as sulfites, food additives, or natural flavorings that may contain allergens. If possible, mention whether allergen-free alternatives are available.\n\n" +
                         "The result format should be as follows:\n" +
