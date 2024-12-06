@@ -1,7 +1,9 @@
 package com.capstone.backend.controller;
 
+import com.capstone.backend.dto.request.MenuImageUrlRequest;
 import com.capstone.backend.dto.request.SessionTokenRequest;
 import com.capstone.backend.dto.request.MenuUpdateRequest;
+import com.capstone.backend.dto.response.MenuImageUrlResponse;
 import com.capstone.backend.dto.response.MenuResponse;
 import com.capstone.backend.entity.Menu;
 import com.capstone.backend.service.MenuService;
@@ -35,5 +37,12 @@ public class MenuController {
         Menu menu = menuService.getMenuById(menuId);
         menuService.deleteMenu(menu, request);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "네이버 이미지 API 사용", description = "네이버 이미지 API로 메뉴의 이미지를 불러옵니다.")
+    @PostMapping("/image")
+    public ResponseEntity<MenuImageUrlResponse> getMenuImageUrl(@Valid @RequestBody MenuImageUrlRequest request) {
+        MenuImageUrlResponse response = menuService.getMenuImageUrl(request);
+        return ResponseEntity.ok(response);
     }
 }
